@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upload</title>
+ <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+<script>
+    var ID = function () {
+        // Math.random should be unique because of its seeding algorithm.
+        // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+        // after the decimal.
+        return '_' + Math.random().toString(36).substr(2, 9);
+    };
+</script>
+<script>
+    var my_ID = ID();
+    // initialisation
+    $(document).ready(function(){
+        document.getElementById('parts_text').value = "";
+    });
+</script>
+<script>
+    var input = [];
+    var parts = [];
+    function submit_UI_info(){
+        // inform server about grouping selected by this client
+        parts = document.getElementById('parts_text').value;
+        console.log('parts: ', parts);
+        var parameters_json = {
+            clientID: my_ID,
+            parts: parts
+        };
+        $.post( "/set_parameters", JSON.stringify(parameters_json), function(resp){
+            if(!resp['server_busy']){
+                console.log('UI message received by server - success!');
+                // $("#score_info").html('Preparing score...');
+                $("#upload-form").submit();
+            }else{
+                alert('Server unavailable :( please try again later');
+            }
+        });
+    };
+    function submit_form(){
+        // submit UI info before sending the form
+        console.log('submitting UI info');
+        submit_UI_info();
+    };
+</script>
+<form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+
+    <strong>Upload XML or MIDI files (.xml, .mxl or .mid) to get features from:</strong><br>
+    <input id="file-picker" type="file" name="file" accept=".xml,.mxl,.mid" multiple>
+    <div id="msg"></div>
+    <!-- <input type="submit" value="Harmonise!" id="upload-button"> -->
+</form>
+&nbsp;
+<div>
+        Select parts/staves (separated with commas) to get features from (leave empty for entire score): <input id="parts_text" type="text" id="myText" value="">
+</div>
+<button id='submit_files' onclick="submit_form()">Submit files</button>
+&nbsp;
+
+<div>
+  Example: if you only want to extract features from parts 0, 1 and 5 type "0, 1, 5" (without quotes) in the parts selection area.
+  &nbsp;
+  <strong>Hint:</strong> if you want to start counting from the end, e.g. to take features from the last two staves of each input score, use negative numbers: -1 is the is the last part, -2 the penultimate etc.
+
+  Example of part/staff numbering:
+  <img src="static/figs/score_parts_example.jpg" alt="Score parts example" style="width:500px;">
+</div>
+</body>
+<script>
+    $("#file-picker").change(function(){
+        console.log('file selected');
+        input = document.getElementById('file-picker');
+        for (var i=0; i<input.files.length; i++)
+        {
+        //koala.jpg, koala.JPG substring(index) lastIndexOf('a') koala.1.jpg
+            var ext= input.files[i].name.substring(input.files[i].name.lastIndexOf('.')+1).toLowerCase()
+            if ((ext == 'xml') || (ext == 'mxl'))
+            {
+                $("#msg").text("Files are supported")
+            }
+            else
+            {
+                $("#msg").text("Files are NOT supported")
+                document.getElementById("file-picker").value ="";
+            }
+        }
+    } );
+</script>
+</html>
