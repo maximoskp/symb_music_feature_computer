@@ -96,6 +96,8 @@ def set_parameters():
     global sever_busy
     parts_in = dat_json['parts']
     user_ID = dat_json['clientID']
+    # make an int array
+    parts_in = [int(s) for s in parts_in.split(',')]
     print('parts_in: ', parts_in)
     print('user_ID: ', user_ID)
     # prepare response
