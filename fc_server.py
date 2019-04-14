@@ -50,9 +50,9 @@ def upload():
     user_input_folder = folder_in + 'input_of' + user_ID
     user_output_folder = folder_out + 'output_of' + user_ID
     if not os.path.isdir(user_input_folder):
-        os.mkdir(user_input_folder)
+        os.makedirs(user_input_folder)
     if not os.path.isdir(user_output_folder):
-        os.mkdir(user_output_folder)
+        os.makedirs(user_output_folder)
     # initialise list of all input and output files
     input_files = []
     output_files = []

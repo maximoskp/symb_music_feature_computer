@@ -19,13 +19,29 @@ def compute_features_of_m21score(s):
     m = m21.features.jSymbolic.AmountOfArpeggiationFeature(s)
     f_0['AmountOfArpeggiation'] = m.extract().vector
     m = m21.features.jSymbolic.AverageMelodicIntervalFeature(s)
-    f_0['AverageMelodicInterval'] = m.extract().vector
+    try:
+        f_0['AverageMelodicInterval'] = m.extract().vector
+    except ZeroDivisionError:
+        print('Zero division error for AverageMelodicInterval - assigning a value of zero')
+        f_0['AverageMelodicInterval'] = 0
     m = m21.features.jSymbolic.MostCommonMelodicIntervalFeature(s)
-    f_0['MostCommonMelodicInterval'] = m.extract().vector
+    try:
+        f_0['MostCommonMelodicInterval'] = m.extract().vector
+    except ZeroDivisionError:
+        print('Zero division error for MostCommonMelodicInterval - assigning a value of zero')
+        f_0['MostCommonMelodicInterval'] = 0
     m = m21.features.jSymbolic.MostCommonMelodicIntervalPrevalenceFeature(s)
-    f_0['MostCommonMelodicIntervalPrevalence'] = m.extract().vector
+    try:
+        f_0['MostCommonMelodicIntervalPrevalence'] = m.extract().vector
+    except ZeroDivisionError:
+        print('Zero division error for MostCommonMelodicIntervalPrevalence - assigning a value of zero')
+        f_0['MostCommonMelodicIntervalPrevalence'] = 0
     m = m21.features.jSymbolic.RelativeStrengthOfMostCommonIntervalsFeature(s)
-    f_0['RelativeStrengthOfMostCommonIntervals'] = m.extract().vector
+    try:
+        f_0['RelativeStrengthOfMostCommonIntervals'] = m.extract().vector
+    except ZeroDivisionError:
+        print('Zero division error for RelativeStrengthOfMostCommonIntervals - assigning a value of zero')
+        f_0['RelativeStrengthOfMostCommonIntervals'] = 0
     m = m21.features.jSymbolic.RelativeStrengthOfTopPitchesFeature(s)
     f_0['RelativeStrengthOfTopPitches'] = m.extract().vector
     m = m21.features.jSymbolic.RelativeStrengthOfTopPitchClassesFeature(s)
@@ -44,10 +60,22 @@ def compute_features_of_m21score(s):
     f_0['PitchClassDistribution'] = m.extract().vector
     f_0['PitchClassDistributionEntropy'] = [sc.entropy( m.extract().vector )]
     m = m21.features.jSymbolic.MelodicIntervalHistogramFeature(s)
-    f_0['MelodicIntervalHistogram'] = m.extract().vector[0:24]
+    try:
+        f_0['MelodicIntervalHistogram'] = m.extract().vector[0:24]
+    except ZeroDivisionError:
+        print('Zero division error for MelodicIntervalHistogram - assigning a value of zero')
+        f_0['MelodicIntervalHistogram'] = 0
     m = m21.features.jSymbolic.BasicPitchHistogramFeature(s)
-    f_0['BasicPitchHistogram'] = m.extract().vector
-    f_0['BasicPitchHistogramEntropy'] = [sc.entropy( m.extract().vector )]
+    try:
+        f_0['BasicPitchHistogram'] = m.extract().vector
+    except ZeroDivisionError:
+        print('Zero division error for BasicPitchHistogram - assigning a value of zero')
+        f_0['BasicPitchHistogram'] = 0
+    try:
+        f_0['BasicPitchHistogramEntropy'] = [sc.entropy( m.extract().vector )]
+    except ZeroDivisionError:
+        print('Zero division error for BasicPitchHistogramEntropy - assigning a value of zero')
+        f_0['BasicPitchHistogramEntropy'] = 0
     m = m21.features.jSymbolic.ChromaticMotionFeature(s)
     f_0['ChromaticMotion'] = m.extract().vector
     # rhythm features
