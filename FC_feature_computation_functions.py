@@ -10,6 +10,31 @@ import music21 as m21
 import numpy as np
 import scipy.stats as sc
 import csv
+import copy
+
+def get_most_correlated_rpcp(pcp_in):
+    pcp = np.array( pcp_in )
+    rpcp = np.array( pcp_in )
+    a = m21.analysis.discrete.KrumhanslSchmuckler()
+    maj_template = np.array( a.getWeights('major') )
+    min_template = np.array( a.getWeights('minor') )
+    # initialise max correlation
+    max_corr = -1
+    # first check major correlations
+    for i in range(12):
+        tmp_pcp = np.roll( pcp , i )
+        tmp_corr = np.corrcoef( tmp_pcp , maj_template )[0][1]
+        if tmp_corr > max_corr:
+            rpcp = copy.deepcopy( tmp_pcp )
+            max_corr = tmp_corr
+    # then check major correlations
+    for i in range(12):
+        tmp_pcp = np.roll( pcp , i )
+        tmp_corr = np.corrcoef( tmp_pcp , np.roll( min_template , -3 ) )[0][1]
+        if tmp_corr > max_corr:
+            rpcp = copy.deepcopy( tmp_pcp )
+            max_corr = tmp_corr
+    return rpcp
 
 def compute_features_of_m21score(s):
     # f_initial = m21.features.base.allFeaturesAsList(s)
@@ -58,6 +83,7 @@ def compute_features_of_m21score(s):
     f_0['Range'] = m.extract().vector
     m = m21.features.jSymbolic.PitchClassDistributionFeature(s)
     f_0['PitchClassDistribution'] = m.extract().vector
+    f_0['RelativePitchClassDistribution'] = get_most_correlated_rpcp( f_0['PitchClassDistribution'] )
     f_0['PitchClassDistributionEntropy'] = [sc.entropy( m.extract().vector )]
     m = m21.features.jSymbolic.MelodicIntervalHistogramFeature(s)
     try:
